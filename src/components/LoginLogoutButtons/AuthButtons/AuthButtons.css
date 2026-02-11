@@ -1,0 +1,12 @@
+
+.sign-block {
+  display: flex;
+  gap: 12px;
+  
+
+.btn-signout {
+    &:hover {
+      background-color: #fee;
+    }
+  }
+}

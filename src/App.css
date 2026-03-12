@@ -1,4 +1,3 @@
-/* Базовые стили */
 body {
   color: #000;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -17,18 +16,17 @@ body {
   text-align: center;
 }
 
-/* Основной контейнер - по центру */
 .mainpage {
-  max-width: 1200px;
-  width: 90%;
+  width: 100%;
+  max-width: 1400px; 
   background: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Контент - всё по центру */
 .content {
   padding: 20px 0;
   display: flex;
@@ -38,13 +36,11 @@ body {
   text-align: center;
 }
 
-/* Заголовки по центру */
 h1, h2, h3, h4, h5, h6 {
   text-align: center;
   width: 100%;
 }
 
-/* Параграфы по центру */
 p {
   text-align: center;
   max-width: 600px;
@@ -52,7 +48,6 @@ p {
   margin-right: auto;
 }
 
-/* Таблица с центрированным текстом */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -76,7 +71,6 @@ p {
   color: #333;
 }
 
-/* Кнопки по центру */
 .button-container {
   display: flex;
   justify-content: center;
@@ -98,7 +92,6 @@ input[type="submit"] {
   transition: all 0.2s;
 }
 
-/* Формы с центрированными элементами */
 .form-container {
   max-width: 500px;
   margin: 0 auto;
@@ -120,7 +113,6 @@ textarea {
   display: block;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
   .App {
     padding: 10px;
@@ -154,7 +146,6 @@ textarea {
   }
 }
 
-/* Центрирование иконок */
 .icon-container {
   display: flex;
   justify-content: center;
@@ -176,7 +167,6 @@ textarea {
   height: 40px;
 }
 
-/* Центрированные уведомления */
 .notification {
   text-align: center;
   max-width: 500px;
@@ -197,7 +187,6 @@ textarea {
   border-left: 4px solid #4CAF50;
 }
 
-/* Карточка по центру */
 .card {
   background: white;
   border-radius: 8px;
@@ -208,7 +197,6 @@ textarea {
   text-align: center;
 }
 
-/* Списки по центру */
 ul.center-list,
 ol.center-list {
   text-align: left;

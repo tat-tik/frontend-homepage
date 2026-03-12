@@ -1,14 +1,14 @@
+
 function useRequest() {
-  const request = async (method, url, data = false, csrftoken = false) => {
+  const request = async (method, url, data = null, csrftoken = null) => {
     
-    const baseUrl = import.meta.env.VITE_SERVER_HOST || 'http://localhost:8000'
+    const baseUrl = import.meta.env.VITE_SERVER_HOST || 'http://localhost:8000';
+    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
     
-   
-    const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`
-    
-    console.log('Request URL:', fullUrl) // Для отладки
-    console.log('Base URL:', baseUrl) // Для отладки
-    
+    console.log('Request URL:', fullUrl);
+    console.log('Request Method:', method);
+    console.log('Request Data:', data);
+         
     const opt = {
       credentials: 'include',
       headers: {
@@ -28,21 +28,30 @@ function useRequest() {
     
     try {
       const response = await fetch(fullUrl, opt)
+     
+      let responseData;
+      const contentType = response.headers.get('content-type')
+      
+      if (contentType && contentType.includes('application/json')) {
+        responseData = await response.json()
+      } else {
+        responseData = await response.text()
+      }
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const error = new Error(`HTTP error! status: ${response.status}`)
+        error.status = response.status
+        error.data = responseData 
+        throw error
       }
       
-    
-      const contentType = response.headers.get('content-type')
-      if (contentType && contentType.includes('application/json')) {
-        return await response.json()
-      } else {
-        return await response.text()
-      }
+      return responseData
       
     } catch (error) {
       console.error('Request failed:', error)
+      if (error.data) {
+        console.error('Server error details:', error.data)
+      }
       throw error
     }
   }

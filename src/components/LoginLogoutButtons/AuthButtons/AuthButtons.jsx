@@ -11,7 +11,7 @@ function AuthButtons() {
   const { dispatching }= useDispatching();
 
   const logout = async() => {
-    if(await request('GET', import.meta.env.VITE_SERVER_HOST + '/api/user/logout/')) {
+    if(await request('GET', import.meta.env.VITE_SERVER_HOST + '/api/users/logout/')) {
       dispatching(false, false, false, false, false)
     };
   }

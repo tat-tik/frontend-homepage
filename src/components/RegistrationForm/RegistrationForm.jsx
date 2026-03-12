@@ -20,8 +20,9 @@ function RegistrationForm() {
     username: /^(?=.{4,20}$)[A-Za-z]+[A-Za-z0-9]*$/, 
     first_name: /^(?=.{2,20}$)[A-Za-zА-Яа-я]+$/, 
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
-    password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()\-_+=;:,.\/?\\|`~[\]{}]{8,}$/, 
+    password: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()\-_+=;:,./?\\|`~\[\]{}]).{6,}$/ 
   }
+  
   const errors = {
     username: {
       customError: 'Логин не удовлетворяет требованиям',
@@ -55,14 +56,13 @@ function RegistrationForm() {
           setStateForm((prevForm) => ({...prevForm, [name]: value}));
         }
         break;
-    default:
+      default:
         setStateForm((prevForm) => ({...prevForm, [name]: value}));       
     }
   }
 
-    const handleSubmit = async(e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    
     if(validateForm(form.current, errors, stateForm, setStateForm, setTooltip, patternsInput)) {
       let formData = new FormData(e.target);
       setLoading(true);
@@ -72,15 +72,10 @@ function RegistrationForm() {
       try {
         const result = await request(
           'POST', 
-          '/api/user/reg/', 
+          '/api/users/reg/', 
           Object.fromEntries(formData), 
           getCookie('csrftoken')
         );
-        
-        if(result['errors']) {
-          findFormError(result['errors'], form.current, setTooltip);
-          return;
-        }
         
         if(result['status login']) {
           dispatching(
@@ -91,14 +86,38 @@ function RegistrationForm() {
             getCookie('csrftoken')
           );
         }
-        
-      } catch (error) {
-        console.error('Ошибка подключения:', error);
-        setTooltip({
-        error: 'Ошибка сервера. Проверьте подключение.',
-        element: form.current
-      });
+      }
       
+      catch (error) {
+        if (error.data) {
+          findFormError(error.data, form.current, setTooltip);
+        }
+        if (error.data.errors) {
+          findFormError(error.data.errors, form.current, setTooltip);
+          } 
+          else if (typeof error.data === 'object') {
+            const formattedErrors = {};
+            Object.keys(error.data).forEach(key => {
+              if (Array.isArray(error.data[key])) {
+                formattedErrors[key] = error.data[key][0];
+              } else {
+                formattedErrors[key] = error.data[key];
+              }
+            });
+            findFormError(formattedErrors, form.current, setTooltip);
+          } else if (typeof error.data === 'string') {
+            setTooltip({
+              error: error.data,
+              element: form.current
+            });
+          }
+        
+        else {
+          setTooltip({
+            error: 'Ошибка сервера. Проверьте подключение.',
+            element: form.current
+          });
+        }
         
       } finally {
         setLoading(false);
@@ -115,35 +134,84 @@ function RegistrationForm() {
               <div className='label-title'>Логин:</div>
               <div className='label-hint'>(Латинские буквы и цифры, первый символ — буква, длина от 4 до 20 символов)</div>
             </label>
-            <input className='input-text' type="text" value={stateForm.username}  id="username" name="username" placeholder="Введите имя пользователя" minLength="4" maxLength="20" onInput={handleState} required />
+            <input 
+              className='input-text' 
+              type="text" 
+              value={stateForm.username}  
+              id="username" 
+              name="username" 
+              placeholder="Введите имя пользователя" 
+              minLength="4" 
+              maxLength="20" 
+              onInput={handleState} 
+              required 
+            />
           </div>
+          
           <div className="input__box reg">
             <label className='label-input reg' htmlFor="first_name">
               <div className='label-title'>Имя:</div>
               <div className='label-hint'>(Только латинские или русские буквы, длина от 2 до 20 символов)</div>
             </label>
-            <input className='input-text' type="text" value={stateForm.first_name} id="first_name" name="first_name" placeholder="Введите полное имя" minLength="2" maxLength="20" onInput={handleState} required />
+            <input 
+              className='input-text' 
+              type="text" 
+              value={stateForm.first_name} 
+              id="first_name" 
+              name="first_name" 
+              placeholder="Введите полное имя" 
+              minLength="2" 
+              maxLength="20" 
+              onInput={handleState} 
+              required 
+            />
           </div>
+          
           <div className="input__box reg">
             <label className='label-input reg' htmlFor="email">
               <div className='label-title'>E-mail:</div>
             </label>
-            <input className='input-text' type="email" value={stateForm.email} id="email" name="email" placeholder="Введите E-mail" onInput={handleState} required />
+            <input 
+              className='input-text' 
+              type="email" 
+              value={stateForm.email} 
+              id="email" 
+              name="email" 
+              placeholder="Введите E-mail" 
+              onInput={handleState} 
+              required 
+            />
           </div>
+          
           <div className="input__box reg">
             <label className='label-input reg' htmlFor="password">
               <div className='label-title'>Пароль:</div>
               <div className='label-hint'>(Не менее 6 символов: как минимум одна заглавная буква, одна цифра и один специальный символ)</div>
             </label>
-            <input className='input-text' type="password" value={stateForm.password} id="password" name="password" placeholder="Введите пароль"  onInput={handleState}  />
+            <input 
+              className='input-text' 
+              type="password" 
+              value={stateForm.password} 
+              id="password" 
+              name="password" 
+              placeholder="Введите пароль"  
+              onInput={handleState}  
+              required
+            />
           </div>
+          
           <div className='submit'>
-            <input className='btn-submit' type="submit" value='СОХРАНИТЬ' />
+            <input 
+              className='btn-submit' 
+              type="submit" 
+              value={loading ? 'ЗАГРУЗКА...' : 'СОХРАНИТЬ'} 
+              disabled={loading}
+            />
           </div>
         </form>
-        </div>
+      </div>
 
-        {tooltip.error !== '' ? <Tooltip message={tooltip.error} element={tooltip.element} /> : ''}
+      {tooltip.error !== '' ? <Tooltip message={tooltip.error} element={tooltip.element} /> : ''}
     </div>
   )
 }

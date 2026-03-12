@@ -1,0 +1,54 @@
+.file-share {
+  margin: 0px .625rem .625rem .625rem;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  /* width: 90%; */
+}
+
+.file-share-manage {
+  /* width: 90%; */
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+input[type=button].btn-share {
+  margin: .625rem .625rem .625rem .625rem;
+  width: auto;
+}
+
+.share-public-url {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: .0rem .625rem .625rem .625rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: .0rem .0rem .625rem .0rem;
+}
+
+.share-public-url-text {
+  width: 19rem;
+  font-size: .75rem;
+  white-space: nowrap;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 5px;
+  margin: 0rem;
+  padding: .25rem .25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.share-public-url-copy {
+  font-size: 1.25rem;
+  margin: 0rem;
+  padding: .0rem .0rem .1rem .0rem ;
+}
+
+.share-public-url-copy:hover {
+  cursor: pointer;
+}

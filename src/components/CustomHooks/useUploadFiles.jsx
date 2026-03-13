@@ -1,12 +1,8 @@
-// useUploadFiles.js
 function useUploadFiles() {
   const uploadFiles = async (files, comments, storage_id, csrftoken, updateProgress) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    
-    // ИСПРАВЛЕННЫЙ URL: /api/storages/${storage_id}/files/upload/
     xhr.open('POST', import.meta.env.VITE_SERVER_HOST + `/api/storages/${storage_id}/files/upload/`);
-    
     xhr.withCredentials = true;
     xhr.setRequestHeader('X-CSRFToken', csrftoken);
     

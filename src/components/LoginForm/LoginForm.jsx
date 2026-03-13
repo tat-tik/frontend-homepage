@@ -64,8 +64,16 @@ function LoginForm() {
           getCookie('csrftoken')
         );
         
-        console.log('Login result:', result);  
-        
+        console.log('🔍 ПОЛНЫЙ ответ от сервера:', result);
+
+// Посмотрим все ключи объекта
+        console.log('🔍 Ключи в ответе:', Object.keys(result));
+
+        // Проверим наличие полей
+        console.log('🔍 result.admin:', result['admin']);
+        console.log('🔍 result.is_superuser:', result['is_superuser']);
+        console.log('🔍 result.user:', result['user']); 
+                
         if(result && result.errors) {
           console.log('Server errors:', result.errors);
           findFormError(result.errors, form.current, setTooltip);

@@ -9,7 +9,15 @@ import useRequest from "../../CustomHooks/useRequest";
 import getCookie from "../../CustomHooks/getCookie";
 
 function Admin() {
-  const { user: currentUser, csrftoken } = useSelector((state) => state.user);
+  const { 
+  isLoggedIn,
+  isAdmin,
+  user_id,    
+  storage_id,
+  csrftoken 
+  }  = useSelector((state) => {
+    return state.user;
+  });
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,29 +25,24 @@ function Admin() {
   const { request } = useRequest();
 
   useEffect(() => {
-    if (!currentUser?.is_superuser) {
+    if (!isAdmin) {
       navigate('/panel');
-    }
-  }, [currentUser, navigate]);
+    } 
+  }, [isAdmin, navigate]);
 
   const fetchUsersData = async () => {
     setIsLoading(true);
     
     try {
-      // Получаем список всех пользователей (только для админа)
       const response = await request(
         'GET', 
         '/api/users/',
         null,
         getCookie('csrftoken')
       );
-      
-      console.log('Users data received:', response);
-      
       if (Array.isArray(response)) {
         setUsers(response);
-        
-        // Вычисляем статистику на основе полученных данных
+
         const total_users = response.length;
         const total_admins = response.filter(u => u.is_superuser).length;
         const total_files = response.reduce((sum, user) => sum + (user.storage?.count_files || 0), 0);
@@ -91,15 +94,11 @@ function Admin() {
         null,
         getCookie('csrftoken')
       );
-      
-      console.log('Delete response:', response);
-      
+            
       if (response && response['status delete user'] === true) {
-        // Обновляем список пользователей после удаления
         const updatedUsers = users.filter(user => user.id !== id);
         setUsers(updatedUsers);
         
-        // Обновляем статистику
         const total_users = updatedUsers.length;
         const total_admins = updatedUsers.filter(u => u.is_superuser).length;
         const total_files = updatedUsers.reduce((sum, user) => sum + (user.storage?.count_files || 0), 0);
@@ -138,10 +137,7 @@ function Admin() {
         getCookie('csrftoken')
       );
       
-      console.log('Toggle admin response:', response);
-      
       if (response && response['status update user'] === true) {
-        // Обновляем список пользователей
         const updatedUsers = users.map(user => {
           if (user.id === userId) {
             return {
@@ -154,8 +150,6 @@ function Admin() {
         });
         
         setUsers(updatedUsers);
-        
-        // Обновляем статистику
         const total_admins = updatedUsers.filter(u => u.is_superuser).length;
         setStats(prev => ({
           ...prev,
@@ -174,10 +168,6 @@ function Admin() {
 
   const userEdit = (id) => {
     navigate(`/panel/user/${id}`);
-  };
-
-  const createUser = () => {
-    navigate('/panel/user/create');
   };
 
   const refreshData = () => {
@@ -211,9 +201,6 @@ function Admin() {
       <div className="admin-header">
         <h1>Административная панель</h1>
         <div className="admin-actions">
-          <button onClick={createUser} className="btn btn-primary">
-            <span className="btn-icon">➕</span> Создать пользователя
-          </button>
           <button onClick={refreshData} className="btn btn-secondary">
             <span className="btn-icon">🔄</span> Обновить данные
           </button>

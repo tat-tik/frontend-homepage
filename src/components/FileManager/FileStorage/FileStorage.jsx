@@ -1,5 +1,5 @@
 import './FileStorage.css';
-import { useState, useEffect, useRef } from 'react'; // Добавили useRef
+import { useState, useEffect, useRef } from 'react'; 
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router";
 import fileSize from "../../CustomHooks/formatFileSize";
@@ -25,24 +25,19 @@ function FileStorage() {
   
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // Используем ref для отслеживания, был ли уже выполнен запрос
   const hasFetched = useRef(false);
 
-  // Проверка прав доступа
   useEffect(() => {
     if (storage && storage_id && !isAdmin && storage_id !== Number(storage)) {
       navigate(`/panel/storage/${storage_id}`);
     }
   }, [storage, storage_id, isAdmin, navigate]);
 
-  // Загрузка данных хранилища - с защитой от бесконечного цикла
   useEffect(() => {
     if (!storage) {
       return;
     }
 
-    // Если уже загружали данные для этого storage, не загружаем снова
     if (hasFetched.current) {
       return;
     }
@@ -54,8 +49,6 @@ function FileStorage() {
       setError(null);
       
       try {
-        console.log(`Loading storage data for id: ${storage}`);
-        
         const response = await request(
           'GET', 
           `/api/storages/${storage}/files/`,
@@ -63,13 +56,10 @@ function FileStorage() {
           getCookie('csrftoken')
         );
         
-        console.log('Storage data received:', response);
-        
         if (isMounted) {
           if (response) {
             setFiles(response.files || []);
             setUser(response.user || null);
-            // Помечаем, что данные загружены
             hasFetched.current = true;
           } else {
             setFiles([]);
@@ -100,11 +90,10 @@ function FileStorage() {
     return () => {
       isMounted = false;
     };
-  }, [storage]); // Убрали request и navigate из зависимостей
+  }, [storage]); 
 
-  // Функция для принудительной перезагрузки данных
   const refreshData = async () => {
-    hasFetched.current = false; // Сбрасываем флаг
+    hasFetched.current = false; 
     setIsLoading(true);
     
     try {
@@ -136,16 +125,10 @@ function FileStorage() {
   e.stopPropagation();
   
     try {
-      console.log(`Downloading file: ${file_id}`);
-    
-      // ПОЛУЧАЕМ БАЗОВЫЙ URL ИЗ .env
+
       const baseUrl = import.meta.env.VITE_SERVER_HOST;
-      console.log('Base URL:', baseUrl);
-    
       const fileToDownload = files.find(f => f.id === file_id);
       const fileName = fileToDownload ? decodeURIComponent(fileToDownload.file_name) : `file_${file_id}`;
-    
-    // ИСПОЛЬЗУЕМ ПОЛНЫЙ URL
       const response = await fetch(`${baseUrl}/api/files/${file_id}/download/`, {
         method: 'GET',
         credentials: 'include',
@@ -154,16 +137,11 @@ function FileStorage() {
         }
       });
     
-      console.log('Response status:', response.status);
-    
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     
       const blob = await response.blob();
-      console.log('Blob type:', blob.type);
-      console.log('Blob size:', blob.size);
-    
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -172,8 +150,6 @@ function FileStorage() {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-    
-      console.log('File downloaded successfully');
     
       setTimeout(() => {
         refreshData();
@@ -191,23 +167,17 @@ function FileStorage() {
   }
   
   try {
-    console.log(`Deleting file: ${file_id} from storage: ${storage}`);
-    
     const response = await request(
       'DELETE',
-      `/api/storages/${storage}/files/${file_id}/delete/`,  // ПРАВИЛЬНЫЙ URL
+      `/api/storages/${storage}/files/${file_id}/delete/`, 
       null,
       getCookie('csrftoken')
     );
     
-    console.log('Delete response:', response);
-    
     if (response && response.status === true) {
-      // Обновляем список файлов после удаления
       setFiles(prevFiles => prevFiles.filter(f => f.id !== file_id));
       alert('Файл успешно удалён');
-      
-      // Дополнительно можно обновить данные с сервера
+
       const updatedResponse = await request(
         'GET', 
         `/api/storages/${storage}/files/`,
@@ -227,7 +197,7 @@ function FileStorage() {
     
     if (error.status === 404) {
       alert('Файл не найден на сервере. Возможно, он уже был удален.');
-      // Обновляем список файлов
+
       const updatedResponse = await request(
         'GET', 
         `/api/storages/${storage}/files/`,
@@ -261,8 +231,6 @@ function FileStorage() {
         getCookie('csrftoken')
       );
       
-      console.log('Update response:', response);
-      
       if (response && response.status === true) {
         setFiles(prevFiles => 
           prevFiles.map(f => f.id === updatedFile.id ? updatedFile : f)
@@ -276,7 +244,6 @@ function FileStorage() {
     }
   };
 
-  // Состояния загрузки и ошибок
   if (!storage) {
     return <div className="storage">Загрузка...</div>;
   }

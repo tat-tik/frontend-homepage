@@ -9,7 +9,6 @@ function Share({ file, setFile }) {
 
   const shareFile = async() => {
     if (file.public_url === null) {
-      // Создаем публичную ссылку
       const result = await request(
         'GET', 
         `/api/files/${file.id}/share/`,
@@ -21,7 +20,6 @@ function Share({ file, setFile }) {
         setFile({...file, public_url: result.token});
       }
     } else {
-      // Отзываем публичную ссылку
       const result = await request(
         'PATCH',
         `/api/storages/${storage}/files/${file.id}/update/`,

@@ -23,24 +23,20 @@ function User() {
   const [error, setError] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Проверка прав доступа
   useEffect(() => {
     if (id_user && user_id && !isAdmin && user_id !== Number(id_user)) {
       navigate(`/panel/user/${user_id}`);
     }
   }, [id_user, user_id, isAdmin, navigate]);
 
-  // Загрузка данных пользователя - ТОЛЬКО ОДИН РАЗ
   useEffect(() => {
     if (!id_user) {
       return;
     }
 
-    // Флаг для отмены запроса при размонтировании
     let isMounted = true;
 
     const loadUserData = async () => {
-      // Не загружаем, если уже загружено и это не первый раз
       if (user && !isInitialLoad) {
         return;
       }
@@ -49,17 +45,13 @@ function User() {
       setError(null);
       
       try {
-        console.log(`Loading user data for id: ${id_user}`);
-        
         const response = await request(
           'GET', 
           `/api/users/${id_user}/`,
           null,
           getCookie('csrftoken')
         );
-        
-        console.log('User data received:', response);
-        
+                
         if (isMounted) {
           if (response) {
             setUser(response);
@@ -95,9 +87,8 @@ function User() {
     return () => {
       isMounted = false;
     };
-  }, [id_user]); // Убираем request из зависимостей
+  }, [id_user]); 
 
-  // Обновление отображения булевых полей
   useEffect(() => {
     if (user) {
       setStatusBooleanField({
@@ -123,9 +114,7 @@ function User() {
           { [name]: newValue },
           getCookie('csrftoken')
         );
-        
-        console.log('User update response:', response);
-        
+         
         if (!response || response['status update user'] !== true) {
           setUser({...user, [name]: oldValue});
           alert('Ошибка при обновлении статуса');
@@ -162,8 +151,6 @@ function User() {
         { [fieldName]: newValue },
         getCookie('csrftoken')
       );
-      
-      console.log('Save response:', response);
       
       if (response && response['status update user'] === true) {
         alert('Изменения сохранены');

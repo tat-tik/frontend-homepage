@@ -38,16 +38,13 @@ function File() {
       setError(null);
       
       try {
-        console.log(`Fetching file details for storage: ${storage}, file: ${file_id}`);
-        
+
         const response = await request(
           'GET', 
           `/api/storages/${storage}/files/${file_id}/`,
           null,
           getCookie('csrftoken')
         );
-        
-        console.log('File data received:', response);
         
         if (isMounted && response?.file) {
           setFile(response.file);
@@ -73,29 +70,22 @@ function File() {
 
   const changeField = (e) => {
     const fieldName = e.target.getAttribute('name');
-    console.log('Changing field:', fieldName);
     setStatusField({status_edit: true, field_edit: fieldName});
   };
 
   const updateFileField = (updatedObject) => {
-    console.log('Updating file with:', updatedObject);
     setFile(updatedObject);
   };
 
  const saveFile = async (e) => {
-  e.preventDefault();  // Добавьте эту строку - предотвращает отправку формы
-  e.stopPropagation(); // Добавьте эту строку - останавливает всплытие события
-  
-  console.log('Save clicked, statusField:', statusField);
-  console.log('Current file:', file);
+  e.preventDefault();  
+  e.stopPropagation(); 
   
   if (!file) return;
-  
-  // Определяем, какое поле сейчас редактируется
+
   const fieldToSave = statusField.field_edit;
   
   if (!fieldToSave) {
-    console.log('No active field to save');
     return;
   }
   
@@ -113,8 +103,6 @@ function File() {
     valueToSave = file[fieldToSave];
   }
   
-  console.log('Saving to server:', { field: serverFieldName, value: valueToSave });
-  
   try {
     const response = await request(
       'PATCH',
@@ -123,15 +111,10 @@ function File() {
       getCookie('csrftoken')
     );
     
-    console.log('Save response:', response);
-    
     if (response?.status === true) {
       alert('Изменения сохранены');
-      
-      // Закрываем редактор после успешного сохранения
       setStatusField({status_edit: false, field_edit: ''});
-      
-      // Обновляем данные файла с сервера
+
       const updatedResponse = await request(
         'GET', 
         `/api/storages/${storage}/files/${file_id}/`,
@@ -140,7 +123,6 @@ function File() {
       );
       
       if (updatedResponse?.file) {
-        console.log('Updated file data:', updatedResponse.file);
         setFile(updatedResponse.file);
       }
     }
@@ -154,10 +136,7 @@ function File() {
 const handleDownload = (e) => {
   e.preventDefault();
   e.stopPropagation();
-  
-  console.log('Downloading file:', file_id);
-  
-  // Используем переменную окружения с портом бэкенда
+
   const baseUrl = import.meta.env.VITE_SERVER_HOST || 'http://localhost:8000';
   window.open(`${baseUrl}/api/files/${file_id}/download/`, '_blank');
 };

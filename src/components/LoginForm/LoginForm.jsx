@@ -1,6 +1,6 @@
 import './LoginForm.css';
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router'; // Добавил navigate
+import { useNavigate } from 'react-router'; 
 import Tooltip from '../Tooltip/Tooltip';
 import validateForm from '../CustomHooks/validateForm';
 import useRequest from "../CustomHooks/useRequest"
@@ -10,7 +10,7 @@ import findFormError  from "../CustomHooks/findFormError";
 
 function LoginForm() {
   const form = useRef(null);
-  const navigate = useNavigate(); // Для перенаправления
+  const navigate = useNavigate(); 
   const { request } = useRequest();
   const { dispatching } = useDispatching();
   const [stateForm, setStateForm] = useState({username: '', password: ''});
@@ -63,36 +63,21 @@ function LoginForm() {
           Object.fromEntries(formData), 
           getCookie('csrftoken')
         );
-        
-        console.log('🔍 ПОЛНЫЙ ответ от сервера:', result);
-
-// Посмотрим все ключи объекта
-        console.log('🔍 Ключи в ответе:', Object.keys(result));
-
-        // Проверим наличие полей
-        console.log('🔍 result.admin:', result['admin']);
-        console.log('🔍 result.is_superuser:', result['is_superuser']);
-        console.log('🔍 result.user:', result['user']); 
                 
         if(result && result.errors) {
-          console.log('Server errors:', result.errors);
           findFormError(result.errors, form.current, setTooltip);
           return;
         }
         
         if(result && result['status login']) {
-          console.log('Login successful, dispatching...');
-          
-          // Сохраняем данные в Redux
           dispatching(
-            true,                          // isLoggedIn
-            result['admin'],                // isAdmin
-            result['user'],                 // user_id
-            result['storage'],               // storage_id
-            getCookie('csrftoken')           // csrftoken
+            true,                          
+            result['admin'],                
+            result['user'],                
+            result['storage'],               
+            getCookie('csrftoken')           
           );
 
-          // Перенаправляем на панель управления
           navigate('/panel');
           
         } else {

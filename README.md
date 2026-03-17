@@ -26,20 +26,19 @@
 8. Сделайте сборку  
    **npm run build**
 
-9. Разрешение для  Vite dev сервер, добавляем в настройки  backstore/settings.py:
-CORS_ALLOWED_ORIGINS = [
+9. Разрешение для  Vite dev сервер, добавляем в настройки  backstore/settings.py:  
+    CORS_ALLOWED_ORIGINS = [  
+        "http://130.49.149.98:5173",  
+        "http://130.49.149.98:8000",  
+        ]
 
-    "http://130.49.149.98:5173", 
-    "http://130.49.149.98:8000",   
-]
-
-10.  В файле настроек проекта Nginx, который Вы создавали на этапе разворачивания бэкэнда **sudo nano /etc/nginx/sites-available/backstore** добавляем:  
+10.   В файле настроек проекта Nginx, который Вы создавали на этапе разворачивания бэкэнда **sudo nano /etc/nginx/sites-available/backstore** добавляем:  
     location / {  
         root /home/tatik/diplom-backend/frontend-homepage/dist;  
         index index.html index.htm;  
         try_files $uri $uri/ /index.html;  
         }
 
-11. Перезапускаем веб-сервер Nginx: **sudo systemctl reload nginx**
+11.  Перезапускаем веб-сервер Nginx: **sudo systemctl reload nginx**
 
-12. Переходим на http://130.49.149.98/ и проверяем работу.
+12.  Переходим на http://130.49.149.98/ и проверяем работу.

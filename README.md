@@ -39,6 +39,15 @@
         try_files $uri $uri/ /index.html;  
         }
 
-11.  Перезапускаем веб-сервер Nginx: **sudo systemctl reload nginx**
+11. Добавляем IP в CSRF_TRUSTED_ORIGINS:**nano /home/tatik/diplom-backend/backstore/settings.py**  строку **"http://130.49.149.98"**  
+и в CORS_ALLOWED_ORIGINS строку **"http://130.49.149.98"**  
+в строку CSRF_COOKIE_NAME = 'csrftoken' 
+CSRF_COOKIE_HTTPONLY = False  
+CSRF_COOKIE_SAMESITE = 'Lax'  
+CSRF_COOKIE_SECURE = False 
 
-12.  Переходим на http://130.49.149.98/ и проверяем работу.
+12. Перезапускаем Gunicorn: **sudo systemctl restart gunicorn**
+
+13.  Перезапускаем веб-сервер Nginx: **sudo systemctl reload nginx**
+
+14.  Переходим на http://130.49.149.98/ и проверяем работу.
